@@ -39,6 +39,8 @@ public class SessionDetailViewModel extends BaseObservable implements ViewModel 
 
     private String sessionTitle;
 
+    private String speakerImageUrl;
+
     @ColorRes
     private int sessionVividColorResId = R.color.white;
 
@@ -79,6 +81,10 @@ public class SessionDetailViewModel extends BaseObservable implements ViewModel 
     private void setSession(@NonNull Session session) {
         this.session = session;
         this.sessionTitle = session.title;
+
+        if (session.speaker != null) {
+            this.speakerImageUrl = session.speaker.getAdjustedImageUrl();
+        }
         TopicColor topicColor = TopicColor.from(session.topic);
         this.sessionVividColorResId = topicColor.vividColorResId;
         this.sessionPaleColorResId = topicColor.paleColorResId;
@@ -158,7 +164,9 @@ public class SessionDetailViewModel extends BaseObservable implements ViewModel 
     }
 
     public void onOverScroll() {
-        callback.onOverScroll();
+        if (callback != null) {
+            callback.onOverScroll();
+        }
     }
 
     private String decideSessionTimeRange(Context context, Session session) {
@@ -173,6 +181,10 @@ public class SessionDetailViewModel extends BaseObservable implements ViewModel 
 
     public String getSessionTitle() {
         return sessionTitle;
+    }
+
+    public String getSpeakerImageUrl() {
+        return speakerImageUrl;
     }
 
     public int getSessionVividColorResId() {
