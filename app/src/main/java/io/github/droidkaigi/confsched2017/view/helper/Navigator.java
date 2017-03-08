@@ -3,8 +3,11 @@ package io.github.droidkaigi.confsched2017.view.helper;
 import android.app.Activity;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
@@ -34,8 +37,8 @@ public class Navigator {
         this.activity = activity;
     }
 
-    public void navigateToSessionDetail(@NonNull Session session) {
-        activity.startActivity(SessionDetailActivity.createIntent(activity, session.id));
+    public void navigateToSessionDetail(@NonNull Session session, @Nullable Class<? extends Activity> parentClass) {
+        activity.startActivity(SessionDetailActivity.createIntent(activity, session.id, parentClass));
     }
 
     public void navigateToFeedbackPage(@NonNull Session session) {
@@ -65,6 +68,23 @@ public class Navigator {
                 .build();
 
         intent.launchUrl(activity, Uri.parse(url));
+    }
+
+    public void showConfirmDialog(@StringRes int titleResId, @StringRes int messageResId,
+            @NonNull ConfirmDialogListener listener) {
+        new AlertDialog.Builder(activity, R.style.DialogTheme)
+                .setTitle(titleResId)
+                .setMessage(messageResId)
+                .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> listener.onClickPositiveButton())
+                .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> listener.onClickNegativeButton())
+                .show();
+    }
+
+    public interface ConfirmDialogListener {
+
+        void onClickPositiveButton();
+
+        void onClickNegativeButton();
     }
 
 }
